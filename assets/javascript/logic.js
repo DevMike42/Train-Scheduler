@@ -41,10 +41,10 @@ $("#add-train-btn").on("click", function (event) {
     // Pushed train info into Firebase
     database.ref().push(newTrain);
 
-    console.log(newTrain.name);
-    console.log(newTrain.destination);
-    console.log(newTrain.firstTime);
-    console.log(newTrain.frequency);
+    // console.log(newTrain.name);
+    // console.log(newTrain.destination);
+    // console.log(newTrain.firstTime);
+    // console.log(newTrain.frequency);
 
     alert("New Train successfully added");
 
@@ -64,16 +64,32 @@ database.ref().on("child_added", function (childSnapshot) {
     // Stores retrieved data into variables
     var trainName = childSnapshot.val().name;
     var trainDest = childSnapshot.val().destination;
-    var trainFirst = childSnapshot.val().firstTime;
-    var trainFreq = childSnapshot.val().frequency;
+    // var trainFirst = childSnapshot.val().firstTime;
+    // var trainFreq = childSnapshot.val().frequency;
 
     // Console log info
-    console.log(trainName);
-    console.log(trainDest);
-    console.log(trainFirst);
-    console.log(trainFreq);
+    // console.log(trainName);
+    // console.log(trainDest);
+    // console.log(trainFirst);
+    // console.log(trainFreq);
 
-    // Prettify First Time input for use in calculating
+    // Format First Train Time input value
+    var firstTrainString = childSnapshot.val().firstTime; 
+    var timeFormat = "HH:mm";
+    // Formatted time for First Train
+    // var timeConverted = moment(firstTrainString, timeFormat);
+
+    // Format frequency input value
+    var freqString = childSnapshot.val().frequency;
+    var freqNum = parseInt(freqString);
+    console.log(freqNum);
+    console.log("Frequency type is " + typeof freqNum);
+    // var freqFormat = "mm";
+    // Formatted time for frequency
+    // var freqConverted = moment(freqString, freqFormat);
+
+    // Calculate next Arrival
+
 
     // Prettify Frequency input for use in calculating?
 
@@ -83,7 +99,7 @@ database.ref().on("child_added", function (childSnapshot) {
     var newRow = $("<tr>").append(
         $("<td>").text(trainName),
         $("<td>").text(trainDest),
-        $("<td>").text(trainFreq),
+        // $("<td>").text(trainFreq),
         $("<td>").text("Next Arrival"),
         $("<td>").text("Minutes Away")
     );
