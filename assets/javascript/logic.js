@@ -1,11 +1,3 @@
-// Plan
-
-// 1. Initialize Firebase
-// 2. Create button for adding new train info - then update the html + update the database
-// 3. Create a way to retrieve train info from the train database.
-// 4. Create a way to calculate the train arrival time. Using difference between start and current time.
-//    Then use moment.js formatting to set difference in months.
-
 // 1. Initialize Firebase
 var config = {
     apiKey: "AIzaSyAHl2SQb-A64VUZVNtENXq9E6LBqIkJMlA",
@@ -41,11 +33,6 @@ $("#add-train-btn").on("click", function (event) {
     // Pushed train info into Firebase
     database.ref().push(newTrain);
 
-    console.log(newTrain.name);
-    console.log(newTrain.destination);
-    console.log(newTrain.firstTime);
-    console.log(newTrain.frequency);
-
     alert("New Train successfully added");
 
     // Clears all input fields
@@ -64,30 +51,38 @@ database.ref().on("child_added", function (childSnapshot) {
     // Stores retrieved data into variables
     var trainName = childSnapshot.val().name;
     var trainDest = childSnapshot.val().destination;
-    var trainFirst = childSnapshot.val().firstTime;
-    var trainFreq = childSnapshot.val().frequency;
+    var tFirstTime = childSnapshot.val().firstTime;
+    var tFreq = childSnapshot.val().frequency;
 
-    // Console log info
-    console.log(trainName);
-    console.log(trainDest);
-    console.log(trainFirst);
-    console.log(trainFreq);
+    // Format first train entry and convert it to 1 year ago
+    var tFirstTimeConv = moment(tFirstTime, "HH:mm").subtract(1, "years");
 
-    // Prettify First Time input for use in calculating
+    // Grabs current time
+    var currentTime = moment();
 
-    // Prettify Frequency input for use in calculating?
+    // Calculates the difference between current time and first time variable 
+    var diffTime = currentTime.diff(moment(tFirstTimeConv), "minutes");
 
-    // Calculate next arrival time
+    // Finds the remainder between differnce in time and frequency for next arrival
+    var tRemainder = diffTime % tFreq;
 
+    // Subtracts remainder from frequency to calculate minutes til next arrival
+    var tMinutesTillTrain = tFreq - tRemainder;
+
+    // Adds minutes til next train to current time to calculate next arrival
+    var nextTrain = moment().add(tMinutesTillTrain, "minutes").format("HH:mm");
+
+    
     // Create new row in Display Div
     var newRow = $("<tr>").append(
         $("<td>").text(trainName),
         $("<td>").text(trainDest),
-        $("<td>").text(trainFreq),
-        $("<td>").text("Next Arrival"),
-        $("<td>").text("Minutes Away")
+        $("<td>").text(tFreq),
+        $("<td>").text(nextTrain),
+        $("<td>").text(tMinutesTillTrain)
     );
 
+    // Appends new row containing new train info to table
     $("#train-table > tbody").append(newRow);
 
 
